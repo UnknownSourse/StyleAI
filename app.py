@@ -66,23 +66,25 @@ def detect_skin_tone(image_path):
         print(f"Image analysis error: {e}")
         return "Medium" # Fallback tone
 
-def get_styling_recommendations(skin_tone, gender, occasion): # Added occasion parameter
+def get_styling_recommendations(skin_tone, gender, occasion):
+    print("\n" + "="*50)
+    print(f"1. CONTACTING GROQ API...")
+    print(f"-> Skin Tone: {skin_tone} | Gender: {gender} | Occasion: {occasion}")
+    
     prompt = f"""
     You are an expert personal fashion stylist. 
     A {gender} user with a '{skin_tone}' skin tone has asked for styling recommendations for a '{occasion}' occasion.
     
     Provide a JSON-formatted response with the following keys:
     - "outfit_description": A detailed, descriptive paragraph of the ideal outfit for this occasion.
-    - "shopping_terms": A list of 3-4 short, highly searchable e-commerce terms for the main clothing items (e.g., ["emerald green shirt", "brown chinos", "tan loafers"]). Keep these under 4 words each!
+    - "shopping_terms": A list of 3-4 short, highly searchable e-commerce terms for the main clothing items.
     - "color_palette": A dictionary with keys "primary", "secondary", and "accent".
     - "accessories": A list of 2-3 recommended accessories.
     - "hairstyle": A brief hairstyle recommendation.
-    - "why_it_works": A detailed explanation of why these recommendations work for their skin tone and the occasion.
+    - "why_it_works": A detailed explanation of why these recommendations work.
     
     Return ONLY valid JSON. Do not include introductory text or markdown tags.
     """
-    
-    # ... (Keep the rest of the groq_client.chat.completions.create code exactly the same)
     
     try:
         chat_completion = groq_client.chat.completions.create(
@@ -97,13 +99,18 @@ def get_styling_recommendations(skin_tone, gender, occasion): # Added occasion p
                 }
             ],
             model=GROQ_MODEL,
-            temperature=0.7, # Controls creativity
-            max_tokens=1200, # Matches the document's configuration parameter
+            temperature=0.7,
+            max_tokens=1200,
         )
-        
+        print("2. GROQ API SUCCESS! Response received.")
+        print("="*50 + "\n")
         return chat_completion.choices[0].message.content
+        
     except Exception as e:
-        print(f"Groq Inference Error: {e}")
+        print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print(" GROQ API ERROR TRIGGERED ")
+        print(f" ERROR DETAILS: {str(e)}")
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
         return None
 
 @app.route('/')
