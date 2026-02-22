@@ -14,7 +14,7 @@ load_dotenv()
 app = Flask(__name__)
 # Set maximum upload size to 10MB as specified in the configuration parameters
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = '/tmp'
 
 # Initialize Groq Client
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -25,8 +25,6 @@ GROQ_MODEL = "llama-3.3-70b-versatile"
 
 # Ensure necessary directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-os.makedirs('templates', exist_ok=True)
-os.makedirs('static', exist_ok=True)
 
 def detect_skin_tone(image_path):
     """
